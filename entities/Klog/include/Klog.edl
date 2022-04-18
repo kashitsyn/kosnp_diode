@@ -1,0 +1,5 @@
+entity klog.Klog
+
+components {
+    klog: kl.Klog
+}

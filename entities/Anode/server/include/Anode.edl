@@ -1,0 +1,6 @@
+entity diode.Anode
+
+components {
+    tcpReceiver: diode.TcpReceiver
+    configurationManager: diode.ConfigurationManager
+}

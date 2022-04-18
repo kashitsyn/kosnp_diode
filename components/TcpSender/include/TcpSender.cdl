@@ -1,0 +1,6 @@
+component diode.TcpSender
+
+interfaces {
+    service : diode.Service
+    consumer: diode.Consumer
+}

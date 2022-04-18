@@ -1,0 +1,47 @@
+execute: kl.diode.Execute
+
+use nk.base._
+
+use EDL Einit
+use EDL kl.diode.Core
+
+use EDL diode.ServiceManager
+use EDL diode.Anode
+use EDL diode.Cathode
+use EDL env.Env
+use EDL vfs.NetVfs
+
+@INIT_EXTERNAL_ENTITIES@
+
+execute {
+    grant ()
+}
+
+request {
+    grant ()
+}
+
+response {
+    grant ()
+}
+
+security {
+    grant ()
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

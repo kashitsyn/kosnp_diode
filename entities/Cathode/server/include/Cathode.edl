@@ -1,0 +1,6 @@
+entity diode.Cathode
+
+components
+{
+    tcpSender: diode.TcpSender
+}

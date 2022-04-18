@@ -1,0 +1,5 @@
+component diode.ConfigurationManager
+
+interfaces {
+    dataStorage: diode.DataStorage
+}

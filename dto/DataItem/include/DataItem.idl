@@ -1,0 +1,8 @@
+package diode.DataItem
+
+const UInt32 MaxDataItemValueLength = 256;
+typedef sequence<UInt8, MaxDataItemValueLength> DataItemValue;
+
+struct DataItem {
+    DataItemValue       value;
+}

@@ -1,0 +1,5 @@
+component diode.TcpReceiver
+
+interfaces {
+    service : diode.Service
+}

@@ -1,0 +1,54 @@
+entities:
+
+- name: diode.ServiceManager
+  connections:
+  - target: diode.Anode
+    id:
+      var: DIODE_ANODE_SERVICE_NAME
+      include: AnodeDescription.h
+  - target: diode.Cathode
+    id:
+      var: DIODE_CATHODE_SERVICE_NAME
+      include: CathodeDescription.h
+  - target: env.Env
+    id: {var: ENV_SERVICE_NAME, include: env/env.h}
+  - target: vfs.NetVfs
+    id: VFS1
+
+- name: diode.Anode
+  connections:
+  - target: diode.Cathode
+    id:
+      var: DIODE_CATHODE_SERVICE_NAME
+      include: CathodeDescription.h
+  - target: env.Env
+    id: {var: ENV_SERVICE_NAME, include: env/env.h}
+  - target: vfs.NetVfs
+    id: VFS1
+
+- name: diode.Cathode
+  connections:
+  - target: diode.Anode
+    id:
+      var: DIODE_ANODE_SERVICE_NAME
+      include: AnodeDescription.h
+  - target: env.Env
+    id: {var: ENV_SERVICE_NAME, include: env/env.h}
+  - target: vfs.NetVfs
+    id: VFS1
+
+- name: env.Env
+
+- name: vfs.NetVfs
+  connections:
+  - target: env.Env
+    id: {var: ENV_SERVICE_NAME, include: env/env.h}
+
+- name: klog.Klog
+  path: @INIT_Klog_PATH@
+  connections:
+  - target: klog.KlogStorage
+    id: {var: KLOG_STORAGE_SERVER_CONNECTION_ID, include: klog_storage/client.h}
+
+- name: klog.KlogStorage
+

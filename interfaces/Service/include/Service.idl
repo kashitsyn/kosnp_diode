@@ -1,0 +1,40 @@
+package diode.Service
+
+typedef SInt8 ServiceRetcode;
+
+const ServiceRetcode ServiceRetcodeOk              = -0;
+const ServiceRetcode ServiceRetcodeGeneric         = -1;
+const ServiceRetcode ServiceRetcodeBaseException   = -2;
+
+const UInt32 MaxServiceNameLength = 255;
+typedef sequence<UInt8, MaxServiceNameLength> ServiceName;
+
+typedef SInt8 ServiceState;
+
+const ServiceState ServiceStateStopped     = 0;
+const ServiceState ServiceStateStarting    = 1;
+const ServiceState ServiceStateStarted     = 2;
+const ServiceState ServiceStateStopping    = 3;
+const ServiceState ServiceStateDefunct     = 4;
+
+typedef SInt8 ServiceStatus;
+
+const ServiceStatus ServiceStatusOk                = 0;
+const ServiceStatus ServiceStatusFailedToStart     = 1;
+const ServiceStatus ServiceStatusFailedToRollback  = 2;
+const ServiceStatus ServiceStatusFailedToStop      = 3;
+const ServiceStatus ServiceStatusFailedToOperate   = 4;
+
+interface {
+    GetName(out ServiceName name, out ServiceRetcode rc);
+
+    SetName(in ServiceName name, out ServiceRetcode rc);
+
+    GetState(out ServiceState state, out ServiceRetcode rc);
+
+    GetStatus(out ServiceStatus status, out ServiceRetcode rc);
+
+    Start(out ServiceRetcode rc);
+
+    Stop(out ServiceRetcode rc);
+}

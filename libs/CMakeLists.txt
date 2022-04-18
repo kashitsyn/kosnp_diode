@@ -1,0 +1,7 @@
+add_subdirectory(BaseService)
+add_subdirectory(Exception)
+add_subdirectory(Runner)
+add_subdirectory(Threading)
+if(KOS)
+  add_subdirectory(NkKosTransport)
+endif()

@@ -1,0 +1,16 @@
+package diode.Consumer
+
+import diode.DataItem
+
+typedef SInt8 ConsumerRetcode;
+
+const ConsumerRetcode ConsumerRetcodeOk              = -0;
+const ConsumerRetcode ConsumerRetcodeGeneric         = -1;
+const ConsumerRetcode ConsumerRetcodeBaseException   = -2;
+
+interface {
+    Consume(
+        in DataItem             item,
+        out ConsumerRetcode     rc
+    );
+}

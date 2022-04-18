@@ -1,0 +1,306 @@
+use trusted._
+
+use nk.base._
+use nk.flow._
+
+use EDL diode.ServiceManager
+use EDL diode.Anode
+use EDL diode.Cathode
+use EDL env.Env
+use EDL vfs.NetVfs
+use EDL klog.Klog
+use EDL klog.KlogStorage
+
+policy object storage_access_checker : Flow {
+    type States = "read" | "no_read"
+    config = {
+        states      : ["read", "no_read"],
+        initial     : "read",
+        transitions : {
+            "read"      : ["no_read"],
+            "no_read"   : ["no_read"]
+        }
+    }
+}
+
+audit profile deny  = { 0: { base: { kss: ["denied"] } } }
+audit profile debug = {
+    10: { 
+        base: {
+            kss: ["denied"]
+        },
+        storage_access_checker: {
+            omit: ["read"],
+            kss: ["denied"]
+        }
+    } 
+}
+
+audit default = debug 10
+
+execute {
+    grant ()
+}
+
+execute dst=diode.Cathode {
+    storage_access_checker.init {sid: dst_sid}
+}
+
+request src=klog.Klog
+        dst=klog.KlogStorage {
+    grant ()
+}
+
+request src=diode.ServiceManager,
+        dst=diode.Anode, endpoint=tcpReceiver.service {
+    grant ()
+}
+
+request src=diode.ServiceManager,
+        dst=diode.Cathode, endpoint=tcpSender.service {
+    grant ()
+}
+
+request src=diode.Anode,
+        dst=diode.Cathode, endpoint=tcpSender.consumer, method=Consume {
+    grant ()
+}
+
+request src=diode.Cathode,
+        dst=diode.Anode, endpoint=configurationManager.dataStorage, method=Get {
+    storage_access_checker.allow {sid: src_sid, states: ["read"]}
+    storage_access_checker.enter {sid: src_sid, state: "no_read"}
+}
+
+request src=diode.ServiceManager,
+        dst=vfs.NetVfs {
+    grant ()
+}
+
+request src=diode.Anode,
+        dst=vfs.NetVfs {
+    grant ()
+}
+
+request src=diode.Cathode,
+        dst=vfs.NetVfs,
+        endpoint=vfs.server {
+    match method=ClientConnected { grant() }
+    match method=ClientDisconnected { grant() }
+
+    match method=Unlink {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Unlinkat {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Link {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Linkat {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Symlink {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Symlinkat {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Ftruncate {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Rename {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Renameat {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Rmdir {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Mkdir {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Mkdirat {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Chdir {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+
+    /* Interface of common descriptor-based functions. */
+    match method=Open {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Openat {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Read {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Pread {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Write {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Writev {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Pwrite {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Lseek {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Stat {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Lstat {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Fstat {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Fstatat {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Fsync {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Fdatasync {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Close {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+
+    /* Interface of common dir-based functions. */
+    match method=Getdents {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+
+    /* Interface of network functions. */
+    match method=Socket {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Socketpair {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Bind {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Listen {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Connect {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Accept {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Poll {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Shutdown {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+
+    match method=Getnameinfo {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Getaddrinfo {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Getifaddrs {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+
+    match method=Getpeername {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Getsockname {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Gethostbyname {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Getnetbyname {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Getprotobyname {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Getprotobynumber {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+
+    match method=Getsockopt {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Setsockopt {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+
+    match method=Recv {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Recvfrom {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Recvmsg {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Send {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Sendto {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Sendmsg {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+
+    /* Other functions. */
+    match method=Synchronize {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+
+    /* Interface of implementation specific functions. */
+    match method=Fcntl {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+    match method=Ioctl {
+        storage_access_checker.allow {sid: src_sid, states: ["no_read"]}
+    }
+}
+
+request dst=kl.core.Core
+{
+    grant()
+}
+
+request dst=env.Env
+{
+    grant()
+}
+
+request src=diode.Cathode dst=klog.Klog {
+    grant ()
+}
+
+request src=diode.Anode dst=klog.Klog {
+    grant ()
+}
+
+response {
+    grant ()
+}
+
+security {
+    grant ()
+}
+
+error {
+    grant ()
+}

@@ -1,0 +1,23 @@
+package diode.DataStorage
+
+typedef SInt8 DataStorageRetcode;
+
+const DataStorageRetcode DataStorageRetcodeOk              = -0;
+const DataStorageRetcode DataStorageRetcodeGeneric         = -1;
+const DataStorageRetcode DataStorageRetcodeBaseException   = -2;
+
+const UInt32 MaxDataStorageValueLength = 1048576; // 1 MiB
+typedef sequence<UInt8, MaxDataStorageValueLength> DataStorageValue;
+
+const UInt32 MaxDataStorageKeyLength = 255;
+typedef sequence<UInt8, MaxDataStorageKeyLength> DataStorageKey;
+
+typedef SInt8 DataStorageKeyStatus;
+
+const DataStorageKeyStatus DataStorageKeyStatusKeyNotInStorage   = 0;
+const DataStorageKeyStatus DataStorageKeyStatusKeyInStorage      = 1;
+
+interface {
+    Get(in DataStorageKey key, out DataStorageValue value,
+        out DataStorageKeyStatus status, out DataStorageRetcode rc);
+}
